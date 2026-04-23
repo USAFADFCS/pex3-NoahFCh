@@ -94,7 +94,7 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
         new->next = NULL;
         new->prev = NULL;
         // add on tail id not at max size
-        if(pq->size < pq->maxSize){
+        /*if(pq->size < pq->maxSize){
             if(pq->size == 0){
                 pq->head = new;
                 pq->tail = new;
@@ -120,7 +120,18 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
             pq->tail->next = new;
             pq->tail = new;
             new->next = NULL;
+        }*/
+       if(pq->size == 0){
+            pq->head = new;
+            pq->tail = new;
         }
+        else{
+            new->prev = pq->tail;
+            pq->tail->next = new;
+            pq->tail = new;
+            new->next = NULL;
+        }
+        pq->size++;
     }
     return depth;
 }
