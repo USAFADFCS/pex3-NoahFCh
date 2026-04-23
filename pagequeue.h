@@ -1,6 +1,6 @@
 /** pagequeue.h
  * ===========================================================
- * Name: _______________________, __ ___ 2026
+ * Name: Noah Chavez, __ ___ 2026
  * Section: CS483 / ____
  * Project: PEX3 - Page Replacement Simulator
  * Purpose: Doubly-linked list page queue ADT for LRU page
