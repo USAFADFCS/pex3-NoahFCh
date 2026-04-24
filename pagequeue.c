@@ -49,40 +49,46 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
     long depth = -1;
     bool hit = false;
 
-    for(int i = 1; i <= pq->size; i++){ 
+    for(int i = 0; i < pq->maxSize; i++){ 
         if(!hit){
             //hit occurs
-            if(temp1->pageNum == pageNum){
-                depth = i;
-                // hit at tail or one element
-                if(temp2 == NULL){
-                    hit = true;
+            if(temp1 != NULL){
+                if(temp1->pageNum == pageNum){
+                    depth = i;
+                    // hit at tail or one element
+                    if(temp2 == NULL){
+                        hit = true;
+                    }
+                    // hit at head
+                    else if(temp1->prev == NULL){
+                        PqNode* OGtail = pq->tail;
+                        pq->head = temp2; 
+                        //temp2->prev = NULL;
+                        //temp2->next = NULL;
+
+                        OGtail->next = temp1;
+                        temp1->prev = OGtail;
+                        temp1->next = NULL;
+                        pq->tail = temp1;
+                        hit = true;
+                    }
+                    // hit in middle
+                    else{
+                        temp2->next = temp1->prev;
+                        temp1->prev->prev = temp2;
+
+                        pq->tail->next = temp1;
+                        temp1->prev = pq->tail;
+                        pq->tail = temp1;
+                        //temp1->next = NULL;
+                        hit = true;
+                    }
+                    
                 }
-                // hit at head
-                else if(temp1->prev == NULL){
-                    pq->head = temp2; 
-                    pq->tail->next = temp1;
-                    temp1->prev = pq->tail;
-                    pq->tail = temp1;  
-                    temp2->prev = NULL;
-                    temp1->next = NULL;
-                    hit = true;
-                }
-                // hit in middle
                 else{
-                    temp2->next = temp1->prev;
-                    temp1->prev->next = temp2;
-                    pq->tail->next = temp1;
-                    temp1->prev = pq->tail;
-                    pq->tail = temp1;
-                    temp1->next = NULL;
-                    hit = true;
+                    temp2 = temp1;
+                    temp1 = temp1->prev;
                 }
-                
-            }
-            else{
-                temp2 = temp1;
-                temp1 = temp1->prev;
             }
         }
     }
@@ -93,8 +99,9 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
         new->pageNum = pageNum;
         new->next = NULL;
         new->prev = NULL;
-        // add on tail id not at max size
-        /*if(pq->size < pq->maxSize){
+        /*
+        // add on tail if not at max size
+        if(pq->size < pq->maxSize){
             if(pq->size == 0){
                 pq->head = new;
                 pq->tail = new;
@@ -120,8 +127,11 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
             pq->tail->next = new;
             pq->tail = new;
             new->next = NULL;
-        }*/
-       if(pq->size == 0){
+        }
+
+        // use if not evicting nodes
+        */
+        if(pq->size == 0){
             pq->head = new;
             pq->tail = new;
         }
@@ -132,6 +142,7 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
             new->next = NULL;
         }
         pq->size++;
+        //
     }
     return depth;
 }
@@ -151,7 +162,7 @@ void pqFree(PageQueue *pq) {
         temp1 = temp2;
     }
     free(temp1);
-    free(temp2);
+    //free(temp2);
     free(pq);
     pq = NULL;
 }

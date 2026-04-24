@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
                 faults[f]++;
         } else {
             // Hit at depth d: fault for f <= d
-            for (int f = 1; f < depth; f++)
+            for (int f = 1; f <= depth; f++)
                 faults[f]++;
         }
 
